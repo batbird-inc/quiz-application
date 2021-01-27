@@ -1,21 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
+
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-
+import LoginPage from './components/Login'
+import SignUp from './components/SignUP'
+import { NavigationContainer } from '@react-navigation/native'
+import AppNavigator from './Navigator/AppNavigation'
+import HomePage from './components/HomeApp'
 export default function App() {
+  const data = ['vikas', 'gaju']
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <AppNavigator/>
+    </NavigationContainer>
+    // <HomePage/>
+    // <SignUp/>
+    
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
