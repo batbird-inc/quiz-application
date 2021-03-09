@@ -27,6 +27,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "ios": {
+      "bundleIdentifier": "com.batbird.in",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.batbird.in",
+      "versionCode": 1
     }
   }
 }

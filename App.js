@@ -4,17 +4,25 @@ import { StyleSheet, Text, View } from 'react-native';
 import LoginPage from './components/Login'
 import SignUp from './components/SignUP'
 import { NavigationContainer } from '@react-navigation/native'
-import AppNavigator from './Navigator/AppNavigation'
-import HomePage from './components/HomeApp'
+import StackNavigation from './Navigator/StackNavigation'
+import OTPPage from './components/OTPPage'
+import Dashboard from './components/Dashboard';
+import ProfilePage from './components/ProfilePage'
+// import Login5 from './components/Login5';
+import BarCodeScanPage from './components/BarCodeScanPage';
+import MobileNoPage from './components/MobileNoPage'
 export default function App() {
-  const data = ['vikas', 'gaju']
   return (
+    // <BarCodeScanPage/>
+    // <MobileNoPage/>
     <NavigationContainer>
-      <AppNavigator/>
+      <StackNavigation/>
     </NavigationContainer>
-    // <HomePage/>
+    // <OTPPage/>
     // <SignUp/>
-    
+    // <Dashboard/>
+    // <ProfilePage/>
+    // <Login5/>
   );
 }
 

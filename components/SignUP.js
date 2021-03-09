@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-    // Button, 
+    Button, 
     ThemeProvider,
     Input 
   } from 'react-native-elements';
@@ -9,7 +9,6 @@ import {
     Text, 
     View, 
     Image,
-    Button
 } from 'react-native';
 import viku from './../assets/mi.jpeg'
 import { styles } from '../Css/LoginCSS'
@@ -99,7 +98,7 @@ loginPage(){
 registration  = (event) => {
     event.preventDefault();
     if(this.validateForm()){
-        alert(" Success....")
+      this.props.navigation.navigate("OTPPage")
     }
 }
 
@@ -161,22 +160,23 @@ registration  = (event) => {
                 errorMessage = { this.state.errors.confirm}  
                 />
               </View>
-              
+              <View style = {{ alignContent : 'center',   width : '80%' }}>
+                <Button  
+                  title = "Registration"
+                  type = "solid"
+                  buttonStyle = {{ borderRadius : 40, backgroundColor : '#517fa4', width : 200, marginTop : 10}}
+                  onPress = { this.registration }
+                />  
+              </View>
+              <View style = {{ alignContent : 'center', marginTop : 10, width : '80%' }}>
+                <Button 
+                  title = " Login"
+                  onPress = { ()=> this.props.navigation.navigate("Login") }
+                  type = "solid"
+                  buttonStyle = {{ borderRadius : 40, backgroundColor : '#517fa4', width : 200, marginTop : 10}}
+                />
+              </View>
           </View>
-        <View style = {{ alignContent : 'center', marginBottom : 30,  width : '80%' }}>
-            <Button  
-            title = "Register"
-            onPress = { this.registration }
-            />  
-        </View>
-        <View style = {{ alignContent : 'center', marginBottom : 30,  width : '80%' }}>
-            <Button  
-                title = "Login"
-                type = "outline"
-                // color="#DDDDDD"
-                onPress = { ()=> this.props.navigation.navigate("Login") }
-            />  
-        </View>
      </View>
    )
  }

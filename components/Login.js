@@ -1,8 +1,9 @@
 import React from 'react';
 import { 
-    // Button, 
+    Button, 
     ThemeProvider,
-    Input 
+    Input,
+    Icon
   } from 'react-native-elements';
 import { 
     StyleSheet, 
@@ -10,9 +11,8 @@ import {
     View, 
     Image,
     TouchableOpacity, 
-    Button
+    TextInput,
 } from 'react-native';
-import viku from './../assets/mi.jpeg'
 import { styles } from '../Css/LoginCSS'
  class Login extends React.Component{
   constructor(props) {
@@ -21,6 +21,7 @@ import { styles } from '../Css/LoginCSS'
         userName : '',
         password : '',
         visibleIcon : false,
+        visible : false,
         errors : {}
     };
   }
@@ -62,6 +63,12 @@ import { styles } from '../Css/LoginCSS'
     return formIsValid
 }
 
+handleLogin = () => {
+  if(this.validateForm()){
+    this.props.navigation.navigate("Dashboard")
+  }
+}
+
  render(){
    return(
      <View style = { styles.mainContainer }>
@@ -70,25 +77,39 @@ import { styles } from '../Css/LoginCSS'
               <Input
                 // style = {{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                 placeholder = '  User Name'
+                autoCapitalize = 'none'
+                underlineColorAndroid = "transparent"
                 value = { this.state.userName }
                 onChangeText = { (userName) => this.setState({ userName })}
                 errorMessage = { this.state.errors.userName}  
-              />
+              /> 
             </View>
-            <View style = { styles.inputView2 }>
+            <View style = { styles.passwordView }>
               <Input
                 // style = {{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                 placeholder = '  Password'
+                secureTextEntry = { this.state.visible ? false : true }
                 value = { this.state.password }
                 onChangeText = { (password) => this.setState({ password })}
                 errorMessage = { this.state.errors.password }
+                autoCapitalize = 'none'
               />
             </View>
-            <View style = { styles.loginView }>
-              <Button  
-              title = "Login"
-              onPress = { this.validateForm }
-              />  
+              <Icon
+                 // reverse
+                  name = { this.state.visible ? 'visibility' : 'visibility-off' }
+                  type = 'material'
+                  color = '#517fa4'
+                  onPress = { ()=>{ this.setState({ visible : !this.state.visible }) }}
+                  style = {{ }}
+              />
+            <View style = {{ alignContent : 'center', marginTop : 10, width : '80%' }}>
+                <Button 
+                  title = " Login"
+                  onPress = { this.handleLogin }
+                  type = "solid"
+                  buttonStyle = {{ borderRadius : 40, backgroundColor : '#517fa4', width : 200, marginTop : 10}}
+                />
             </View>
         </View>
      </View>
