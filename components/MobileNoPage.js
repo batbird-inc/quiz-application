@@ -28,8 +28,8 @@ const attemptInvisibleVerification = false;
   constructor(props) {
     super(props);
     this.state = {
-        mobileNo : '',
-        tempMobileNo : '',
+        usermobile : '',
+        tempusermobile : '',
         visibleIcon : false,
         isOTP : false,
         errors : {},
@@ -43,7 +43,8 @@ const attemptInvisibleVerification = false;
               'To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device.',
           }
         : undefined,
-        otpData : ''
+        otpData : '',
+        isLogin : ''
     };
     this.recaptchaVerifier = createRef();
   }
@@ -51,7 +52,7 @@ const attemptInvisibleVerification = false;
   validateMobileNumber = () => {
     var regexp = /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{8,16})$/
     console.log("Regular Expretion...");
-    return regexp.test(this.state.mobileNo)
+    return regexp.test(this.state.usermobile)
     
   }
 
@@ -59,8 +60,8 @@ const attemptInvisibleVerification = false;
     let errors = {};
     let formIsValid = true;
 
-    if(!this.state.mobileNo) {
-        errors["mobileNo"] = "*Enter Mobile Number";
+    if(!this.state.usermobile) {
+        errors["usermobile"] = "*Enter Mobile Number";
         formIsValid = false;
     }
 
@@ -68,7 +69,7 @@ const attemptInvisibleVerification = false;
     // {
     //   console.log("Number False");
     //    formIsValid = false;
-    //    errors["mobileNo"] = "*Enter Valid Mobile Number";
+    //    errors["usermobile"] = "*Enter Valid Mobile Number";
     // }
 
     this.setState({
@@ -85,7 +86,7 @@ registration  = async(event) => {
         // try {
         //   let phoneProvider = new firebase.auth.PhoneAuthProvider();
         //   let verificationId = await phoneProvider.verifyPhoneNumber(
-        //     '+91'+this.state.mobileNo,
+        //     '+91'+this.state.usermobile,
         //     this.recaptchaVerifier.current
         //   );
         //   console.log(" Phone Auth..........");
@@ -110,11 +111,11 @@ registration  = async(event) => {
         // .database()
         // .ref('Users/')
         // .set({
-        //  mobileNo : this.state.mobileNo
+        //  usermobile : this.state.usermobile
         // });
         this.setState({ isOTP : true })
-        this.setState({ tempMobileNo : this.state.mobileNo })
-        this.setState({ mobileNo : '' })
+        this.setState({ tempusermobile : this.state.usermobile })
+        this.setState({ usermobile : '' })
         }
 }
 
@@ -134,15 +135,16 @@ phoneAuthProvider = async() =>
 }
 async getApiData()
 {
-    let tempNo = this.state.mobileNo
-    console.log(" Mobile No is : ",this.state.mobileNo);
+    let tempNo = this.state.usermobile
+    console.log(" Mobile No is : ",this.state.usermobile);
     // https://www.batbird.in/api/otp.php?usermobile=8788897048
-    console.log('https://www.batbird.in/api/otp.php?usermobile='+tempNo);
-    let resp = await axios.post('https://www.batbird.in/api/otp.php?usermobile='+this.state.mobileNo)
+    // console.log('https://www.batbird.in/api/otp.php?usermobile='+tempNo);
+    // const article = { usermobile : '1234567890'}
+    let resp = await axios.post('https://batbird.in/api/index.php', { params: { mobile : tempNo} })
     console.log(resp.data)
     // alert("OTP Send");
-    this.setState({ tempMobileNo : tempNo })
-    this.setState({mobileNo : ''})
+    this.setState({ tempusermobile : tempNo })
+    this.setState({usermobile : ''})
     this.setState({ isOTP : true })
     this.timeOut()
 }
@@ -150,8 +152,8 @@ async getApiData()
 isOTP = () =>{
     let errors = {};
     let formIsValid = true;
-    if(!this.state.mobileNo) {
-      errors["mobileNo"] = "*Enter OTP";
+    if(!this.state.usermobile) {
+      errors["usermobile"] = "*Enter OTP";
       formIsValid = false;
     }
     this.setState({
@@ -160,14 +162,14 @@ isOTP = () =>{
     return formIsValid
 }
 
-isHandleOTP = async() =>{
+isHandleOTP = () =>{
   let formIsValid = false;
-  if(this.state.mobileNo == this.state.otpData){
+  if(this.state.usermobile == this.state.otpData){
     formIsValid = true;
     console.log( " OTP is Match :- ",formIsValid);
     return formIsValid
   }
-  await AsyncStorage.removeItem('isLogin')
+  // AsyncStorage.removeItem('isLogin')
   return formIsValid;
 }
 
@@ -176,14 +178,16 @@ confirmOTP = async() =>
     if(this.isOTP()){
       try
       {
-        await  AsyncStorage.setItem('isLogin', this.state.tempMobileNo)
+        await  AsyncStorage.setItem('isLogin', this.state.tempusermobile)
         console.log("From AsyncStorage...");
-        let otpRespo = await axios.get('https://www.batbird.in/api/otp_v.php?mobile='+this.state.tempMobileNo)
-        this.setState({ otpData : otpRespo.data })
+        let otpRespo = await axios.get('https://www.batbird.in/api/otp_v.php?mobile='+this.state.tempusermobile)
+        this.setState({ otpData : otpRespo.data.data })
+        this.setState({ isLogin : await AsyncStorage.getItem('isLogin')})
+        console.log(" isLogin From Mobile Page :- ",this.state.isLogin);
         console.log(" OTP is :- ",this.state.otpData);
-        if(this.isHandleOTP()){
+        // if(this.isHandleOTP()){
           this.props.navigation.navigate("Dashboard")
-        }
+        // }
       } 
       catch(error)
       {
@@ -194,7 +198,7 @@ confirmOTP = async() =>
 
 resendOTP = () => {
     this.setState({ isOTP : false })
-    this.setState({mobileNo : ''})
+    this.setState({usermobile : ''})
     // window.location.reload(true);
 }
 
@@ -228,7 +232,7 @@ timeOut = () => {
              
          }
          {
-            this.state.isOTP == true? <Text style = {{ fontSize : 15, color : 'white'}}>OTP send on { this.state.tempMobileNo }</Text> : null
+            this.state.isOTP == true? <Text style = {{ fontSize : 15, color : 'white'}}>OTP send on { this.state.tempusermobile }</Text> : null
          }
           {/* <FirebaseRecaptchaVerifierModal
             ref = { this.recaptchaVerifier }
@@ -240,9 +244,9 @@ timeOut = () => {
                 <Input
                   // label = { this.state.isOTP == false? 'Enter Mobile No' : 'Enter OTP'}
                   placeholder = { this.state.isOTP == false? 'Enter Mobile No' : 'Enter OTP'} 
-                  value = { this.state.mobileNo }
-                  onChangeText = { (mobileNo) => this.setState({ mobileNo })}
-                  errorMessage = { this.state.errors.mobileNo }
+                  value = { this.state.usermobile }
+                  onChangeText = { (usermobile) => this.setState({ usermobile })}
+                  errorMessage = { this.state.errors.usermobile }
                   style = {{ color : '#e8e4e3'}}
                   keyboardType = 'phone-pad'
                   autoCompleteType = 'off'

@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     ImageBackground,
-    TouchableOpacity,
+    // TouchableOpacity,
     Image,
     ScrollView,
     DrawerLayoutAndroid
@@ -18,6 +18,7 @@ import {
 import SliderPage from './SliderPage';
 import { Avatar, Card, Title, Paragraph, Button, Menu, Divider, Provider} from 'react-native-paper';
 import CountDown from 'react-native-countdown-component';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -37,17 +38,20 @@ class Dashboard extends React.Component
             isLogin : '',
             slidlerImg : [],
             firstComp : [],
+            url : '',
+            coins : [],
+            
         }
 
         this.drawer = createRef();
     }
 
     async componentDidMount() {
-        //   let getApiData = axios.get("https://batbird.in/api/maincat.php");
-        //   this.setState({ apiData : getApiData })
         this.setState({ isLogin : await AsyncStorage.getItem('isLogin')})
+        this.setState({ url : await AsyncStorage.getItem('url')})
         this.getSliderImage()
         this.getFirstCompetition()
+        this.getCoins()
       }
 
     async getSliderImage() {
@@ -61,6 +65,14 @@ class Dashboard extends React.Component
         this.setState({ firstComp : fcomp.data.data })
         console.log(" First Compatition data is :- ",this.state.firstComp);
     }
+
+    async getCoins() {
+        let gcoin = await axios.get('https://www.batbird.in/api/show_coin.php?mobile='+this.state.isLogin)
+        this.setState({ coins : gcoin.data.data })
+        console.log(" Coins is :- ",this.state.coins);
+    }
+
+    
 //       <View>
 //       {
 //           this.state.slidlerImg.map((index)=>{
@@ -92,8 +104,8 @@ class Dashboard extends React.Component
         this.props.navigation.navigate("QuizStart")
     }
 
-    logout = async () =>{
-        await AsyncStorage.removeItem('isLogin')
+    logout =  () => {
+        AsyncStorage.removeItem('isLogin')
         this.props.navigation.navigate("MobileNoPage")
     }
 
@@ -172,20 +184,23 @@ navigationView = () => {
                         drawerPosition={'left'}
                         renderNavigationView={this.navigationView}
                     >
+                
                 <Appbar style = { styles.navbar }>
                     <Appbar.Action
                         icon = "menu"
                         onPress={() => this.drawer.current.openDrawer()}
                     />
+                    {/* <TouchableOpacity> */}
                     <Appbar.Action 
                         icon = "qrcode-scan"
                         style = {{ marginLeft : '75%'}}
                         onPress = { ()=>{ this.props.navigation.navigate("BarCodeScanPage")}}
                     />
+                    {/* </TouchableOpacity> */}
                 </Appbar>
 
                
-
+               
                 {/* <View style = { styles.timerCard }> */}
                 <View style = { styles.pageView }>
                     <Pages indicatorColor = { '#1d1d1d'}>
@@ -202,6 +217,51 @@ navigationView = () => {
 
                <ScrollView automaticallyAdjustContentInsets = { false }>
                <View style = { styles.cardView }>
+                <View style = { styles.coinView } >
+                    {/* <View style = {{ flex : 1, alignContent : 'center', flexDirection : 'row'}}> */}
+                        <View style ={{ flex : 0 }}>
+                                {/* {
+                                    this.state.coins.map((item, index)=>{
+                                        return(
+                                            <View key = { index } style = {{ flex : 1, flexDirection : 'row'}}>
+                                            <View style = {{ flex : 0}}>
+                                                <Image
+                                                    style = {{ height : '80%', width : '80%', marginRight : 40, borderRadius : 0, marginTop : 5}}
+                                                    source = { require('../assets/coins.gif')}
+                                                />
+                                            </View> 
+                                            <View style = {{ flex : 0}}>
+                                                <Text style = {{ fontSize : 18, color : 'white', marginTop : 10}} >
+                                                    {item.coin_gifted} Coins
+                                                </Text>
+                                            </View>
+                                            </View>
+                                        )
+                                    })
+                                }  */}
+                        </View>
+                        {/* <TouchableOpacity onPress = { ()=>{ this.props.navigation.navigate("BarCodeScanPage")} }> */}
+                            {/* <View style = {{ flex :0, flexDirection : 'row', backgroundColor : 'red'}}> */}
+                                {/* <View style = {{ flex : 0, backgroundColor : 'blue', marginRight : 10}}> */}
+                                <TouchableOpacity onPress = { ()=>{ this.props.navigation.navigate("BarCodeScanPage")} }>
+                                    <Text style = {{ fontSize : 18, color : 'white', marginTop : 10, marginLeft : 150}}>
+                                         Pay
+                                    </Text> 
+                                </TouchableOpacity>
+                                {/* </View> */}
+                                {/* <View style = {{ flex : 0, backgroundColor : 'green'}}>  */}
+                                <TouchableOpacity onPress = { ()=>{ this.props.navigation.navigate("BarCodeScanPage")} }>
+                                    <Image
+                                        style = {{ height : '100%', width : '70%', marginRight : 60, borderRadius : 0,}}
+                                        source = { require('../assets/scanQR.gif')}
+                                    /> 
+                                {/* </View>  */}
+                            {/* </View> */}
+                        </TouchableOpacity>
+                   
+                    {/* </View>  */}
+                </View>
+
                <Card style = { styles.timerCard } >
                     
                         {/* <ImageBackground 
@@ -271,66 +331,31 @@ navigationView = () => {
                 </View> */}
 
                 <View style = {styles.scrolcardView}>
-
-                    <Card style = { styles.quiz1Card } >
-                            <ImageBackground 
-                                style = {{ 
-                                    height : '100%', width : '100%', 
-                                    shadowColor : 'red', 
-                                    shadowOffset : { height : 2, width : 2 },
-                                    shadowRadius : 10
-                                }} 
-                                imageStyle = {{ borderRadius : 10}}
-                                source = { require('../assets/gk.jpg')} >
-                                
-                                <View style = { styles.cricketTextView }>
-                                    <Text style = { styles.worldCricketText }> Timer</Text>
-                                </View>
-                                <Card.Actions >
-                                </Card.Actions>
-
-                            </ImageBackground> 
-                    </Card>
-
-                    <Card style = { styles.quiz2Card } >
-                            <ImageBackground 
-                                style = {{ 
-                                    height : '100%', width : '100%', 
-                                    shadowColor : 'red', 
-                                    shadowOffset : { height : 2, width : 2 },
-                                    shadowRadius : 10
-                                }} 
-                                imageStyle = {{ borderRadius : 10}}
-                                source = { require('../assets/gk.jpg')} >
-                                
-                                <View style = { styles.cricketTextView }>
-                                    <Text style = { styles.worldCricketText }> Timer</Text>
-                                </View>
-                                <Card.Actions >
-                                </Card.Actions>
-
-                            </ImageBackground>
-                    </Card>
-
-                    <Card style = { styles.quiz3Card } >
-                            <ImageBackground 
-                                style = {{ 
-                                    height : '100%', width : '100%', 
-                                    shadowColor : 'red', 
-                                    shadowOffset : { height : 2, width : 2 },
-                                    shadowRadius : 10
-                                }} 
-                                imageStyle = {{ borderRadius : 10}}
-                                source = { require('../assets/gk.jpg')} >
-                                
-                                <View style = { styles.cricketTextView }>
-                                    <Text style = { styles.worldCricketText }> Timer</Text>
-                                </View>
-                                <Card.Actions >
-                                </Card.Actions>
-                            </ImageBackground> 
-                    </Card>
-
+                    {
+                        this.state.firstComp.map((item, index)=>{
+                            return(
+                                <Card style = { styles.quiz3Card } key = {index}>
+                                    <ImageBackground 
+                                        style = {{ 
+                                            height : '100%', width : '100%', 
+                                            shadowColor : 'red', 
+                                            shadowOffset : { height : 2, width : 2 },
+                                            shadowRadius : 10
+                                        }} 
+                                        imageStyle = {{ borderRadius : 10}}
+                                        source = {{ uri : 'https://www.batbird.in/admin/' +  item.image }} >
+                                        
+                                        <View style = { styles.cricketTextView }>
+                                            <Text style = { styles.worldCricketText }>{item.cname} </Text>
+                                            <Text style = { styles.worldCricketText }>{item.dumdate} </Text>
+                                        </View>
+                                        <Card.Actions >
+                                        </Card.Actions>
+                                    </ImageBackground> 
+                                </Card>
+                            )
+                        })
+                    }
                 </View>
                 </ScrollView>
                 
@@ -384,6 +409,29 @@ const styles = StyleSheet.create({
         borderRadius : 10
         // alignItems : 'center'
 },
+coinView : {
+    flex : 1,
+    flexDirection : 'row',
+    height : 50, 
+    width : '95%',
+    shadowOpacity : 10,
+    shadowRadius : 20,
+    shadowOffset : {
+        height : 10,
+        width : 10,
+    },
+    // elevation : 5,
+   //  opacity : 0.5,
+   shadowColor : 'black',
+//    justifyContent : 'space-between',
+//    alignItems : 'center' ,
+   backgroundColor: '#333333',
+//    borderRadius : 30,
+    marginBottom : 10,
+    marginTop : 3,
+    paddingRight : 10,
+    paddingLeft : 10
+},
 timerCard : {
         height : 150, 
         width : '95%',
@@ -422,7 +470,7 @@ text : {
     marginLeft : 200
 },
 cardView : {
-    flex : 0,
+    flex : 1,
     alignItems : 'center',
     justifyContent : 'center',
     marginTop : '2%'

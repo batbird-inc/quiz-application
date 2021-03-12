@@ -3,6 +3,7 @@ import {Button, Dimensions, StyleSheet, TouchableOpacity, Text, View} from 'reac
 import {BarCodeScanner, BarCodeScannerResult} from 'expo-barcode-scanner';
 import BarcodeMask from 'react-native-barcode-mask';
 import { Icon } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const finderWidth = 280;
 const finderHeight = 230;
@@ -18,7 +19,8 @@ class BarCodeScanPage extends React.Component{
         this.state = {
             hasPermission : null,
             type : BarCodeScanner.Constants.Type.back,
-            scanned : false
+            scanned : false,
+            URLdata : '',
         }
     }
 
@@ -28,15 +30,18 @@ class BarCodeScanPage extends React.Component{
     }
 
 
-    handleBarCodeScanned = (scanningResult) => {
+    handleBarCodeScanned = async (scanningResult) => {
         if (!this.state.scanned) {
             let {type, data, bounds: {origin} = {}} = scanningResult;
             const {x, y} = origin;
             if (x >= viewMinX && y >= viewMinY && x <= (viewMinX + finderWidth / 2) && y <= (viewMinY + finderHeight / 2)) 
             {
                 this.setState({ scanned : true })
+                await AsyncStorage.setItem('url',data)
+                // this.setState({ URLdata : await AsyncStorage.setItem('url') })
+                console.log(" Payment URL :- ",data);
                 alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-                this.props.navigation.navigate("Dashboard")
+                this.props.navigation.navigate("PaymentPage")
             }
         }
     }

@@ -23,6 +23,7 @@ import MobileNoPage from '../components/MobileNoPage';
 import NavigationDrawer from '../Navigator/NavigationDrawer';
 import QRCodeScannerPage from '../components/QRCodeScannerPage';
 import BarCodeScanPage from '../components/BarCodeScanPage';
+import PaymentPage from '../components/PaymentPage';
 // import { NavigationContainer } from '@react-navigation/native';
 const Stack = createStackNavigator()
 const StackNavigation = () => {
@@ -52,6 +53,7 @@ const StackNavigation = () => {
             <Stack.Screen name = "MobileNoPage" component = { MobileNoPage }/>
             <Stack.Screen name = "QRCodeScannerPage" component = { QRCodeScannerPage }/>
             <Stack.Screen name = "BarCodeScanPage" component = { BarCodeScanPage}/>
+            <Stack.Screen name = "PaymentPage" component = { PaymentPage}/>
         </Stack.Navigator>
         // </NavigationContainer>
     );

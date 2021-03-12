@@ -8,8 +8,10 @@ import {
 import {
     Input,
     Icon,
-    Button
 } from 'react-native-elements';
+import { Button } from 'react-native-paper'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 
 
@@ -17,25 +19,32 @@ class ProfilePage extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            firstName : "",
-            lastName : "",
+            name : "",
             email : "",
             address : "",
             errors : {},
+            isLogin : '',
+            usersData : []
         }
+    }
+
+    async componentDidMount(){
+        this.setState({ isLogin : await AsyncStorage.getItem('isLogin')})
+        this.getUsersDetails()
+    }
+
+    async getUsersDetails(){
+        let gusers = await axios.get('https://www.batbird.in/api/profile_show.php?usermobile='+this.state.isLogin)
+        this.setState({ usersData : gusers.data.data})
+        console.log(" Users Details :- ",this.state.usersData);
     }
 
     validateForm = () => {
         let errors = {};
         let formIsValid = true;
     
-        if(!this.state.firstName) {
-            errors["firstName"] = "*Enter first name";
-            formIsValid = false;
-        }
-    
-        if(!this.state.lastName) {
-            errors["lastName"] = "*Enter last name";
+        if(!this.state.name) {
+            errors["name"] = "*Enter full name";
             formIsValid = false;
         }
     
@@ -51,11 +60,6 @@ class ProfilePage extends React.Component{
             errors["email"] = "*Enter email id";
             formIsValid = false;
         }
-    
-        if(!this.state.address) {
-            errors["address"] = "*Enter Address";
-            formIsValid = false;
-        }
 
         this.setState({
             errors: errors
@@ -67,8 +71,17 @@ class ProfilePage extends React.Component{
     handleValidation = () =>{
         // event.preventDefault();
         if(this.validateForm()){
-            this.props.navigation.navigate("Dashboard")
+            console.log(" Users Ok...");
+            this.handleUsersData()
+            // this.props.navigation.navigate("Dashboard")
         }
+    }
+
+    handleUsersData = async () => {
+        console.log(" isLoogin Profile :- ",this.state.isLogin);
+        let userData = await axios.post('https://www.batbird.in/api/profile.php?usermobile='+this.state.isLogin+'&username='+this.state.name+'&useremail='+this.state.email)
+        console.log(" User Profile is :- ", userData.data);
+        console.log("https://www.batbird.in/api/profile.php?usermobile= "+this.state.isLogin+"username= "+this.state.name+"useremail= "+this.state.email);
     }
     render(){
         return(
@@ -85,67 +98,92 @@ class ProfilePage extends React.Component{
                 <View style = { styles.titleView }>
                     <Text style = {{ fontSize : 20, color : 'white'}}> Edit Profile</Text>
                 </View>
-                <View style = { styles.userView }>
+                {
+                    // this.state.usersData.length>0 ? 
+                    // <View>
+                    //     {
+                    //         this.state.usersData.map((item, index)=>{
+                    //             return( 
+                    //             <View style = { styles.infoView } key = { index }>
+                    //                 <View style = { styles.emailView }>
+                    //                     <Input
+                    //                         value = { item.username }
+                    //                         onChangeText = { (name) => this.setState({ name })}
+                    //                         // errorMessage = { this.state.errors.name }
+                    //                         style = {{ color : 'white'}}
+                    //                     /> 
+                    //                 </View>
+                    //                 <View style = { styles.emailView }>
+                    //                     <Input
+                    //                         value = { item.useremail }
+                    //                         onChangeText = { (email) => this.setState({ email })}
+                    //                         // errorMessage = { this.state.errors.email }
+                    //                         style = {{ color : 'white'}}
+                    //                     /> 
+                    //                 </View> 
+                    //             </View>
+                    //             )})
+                  
+                    //     }
+                    // </View> : 
+                    <View style = { styles.infoView }>
+                        <View style = { styles.emailView }>
+                            <Input
+                                placeholder = ' Full Name'
+                                value = { this.state.name }
+                                onChangeText = { (name) => this.setState({ name })}
+                                errorMessage = { this.state.errors.name }
+                                style = {{ color : 'white'}}
+                            />
+                        </View>
+                        <View style = { styles.emailView }>
+                            <Input
+                                placeholder = ' Email ID'
+                                value = { this.state.email }
+                                onChangeText = { (email) => this.setState({ email })}
+                                errorMessage = { this.state.errors.email }
+                                style = {{ color : 'white'}}
+                            />
+                        </View> 
+                    </View>
+                } 
+                
+                {/* <View style = { styles.userView }>
                     <Icon
                         reverse
                         name='account-circle'
                         type='material'
                         // color=''
                     />
-                </View>
-                <View style = { styles.infoView }>
-                <View style = { styles.nameView }>
-                    <View style = { styles.fnameView }>
+                </View> */}
+                {/* <View style = { styles.infoView }>
+                    <View style = { styles.emailView }>
                         <Input
-                            placeholder = '  First Name'
-                            value = { this.state.firstName }
-                            onChangeText = { (firstName) => this.setState({ firstName })}
-                            errorMessage = { this.state.errors.firstName}  
+                            placeholder = ' Full Name'
+                            value = { this.state.name }
+                            onChangeText = { (name) => this.setState({ name })}
+                            errorMessage = { this.state.errors.name }
+                            style = {{ color : 'white'}}
                         />
                     </View>
-                    <View style = { styles.lnameView }>
+                    <View style = { styles.emailView }>
                         <Input
-                            // style = {{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                            placeholder = '  Last Name'
-                            value = { this.state.lastName }
-                            onChangeText = { (lastName) => this.setState({ lastName })}
-                            errorMessage = { this.state.errors.lastName }  
+                            placeholder = ' Email ID'
+                            value = { this.state.email }
+                            onChangeText = { (email) => this.setState({ email })}
+                            errorMessage = { this.state.errors.email }
+                            style = {{ color : 'white'}}
                         />
-                    </View>
-                </View>
-                <View style = { styles.emailView }>
-                    <Input
-                        placeholder = ' Email ID'
-                        value = { this.state.email }
-                        onChangeText = { (email) => this.setState({ email })}
-                        errorMessage = { this.state.errors.email }
-                    />
-                </View>
-                <View style = { styles.addressView }>
-                    <Input
-                        placeholder = ' Address'
-                        value = { this.state.address }
-                        onChangeText = { (address) => this.setState({ address })}
-                        errorMessage = { this.state.errors.address }
-                    />
-                </View> 
+                    </View> 
+                </View> */}
                 <View style = { styles.logSaveView }>
-                    <View style = { styles.logoutView }>
-                        <Button 
-                            title = "Log out"
-                            type = "solid"
-                            onPress = { ()=> { this.props.navigation.navigate("Dashboard")} }
-                            buttonStyle = {{ borderRadius : 40, backgroundColor : 'black'}}
-                        />
-                    </View>
                     <View style = { styles.saveView }>
                         <Button 
-                            title = "save"
-                            type = "solid"
+                           mode = "contained"
+                           style = {{  borderRadius : 5, backgroundColor : '#49078f',}}
                             onPress = { this.handleValidation }
-                            color='#517fa4'
-                            buttonStyle = {{ borderRadius : 40, backgroundColor : 'black'}}
-                        />
+                            
+                        > Save</Button>
                     </View> 
                 </View>
                 {/* <View style = { styles.aboconView }> */}
@@ -174,7 +212,7 @@ class ProfilePage extends React.Component{
                             onPress = { ()=> { this.props.navigation.navigate("BankDetails")} }
                         />
                     </View>
-                </View>
+                
             </View>
         )
     }
@@ -215,11 +253,11 @@ const styles = StyleSheet.create({
     },
     logoutView : {
         flex: 0,
-        width: 100,
+        width: 130,
     },
     saveView : {
         flex: 0,
-        width: 100,
+        width: 130,
     },
     logSaveView : {
         flex: 0,
