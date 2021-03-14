@@ -12,6 +12,7 @@ import {
 import { Button } from 'react-native-paper'
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import { saveMobile } from './HTTPService';
 
 
 
@@ -20,9 +21,14 @@ class PostMethodTest extends React.Component{
         super(props)
         this.state = {
             name : "",
-            errors : {}
+            errors : {},
+            postId : ''
         }
+        //  var obj = new object();
+        // this.objHTTP = new HTTPService();
     }
+
+
 
     async componentDidMount(){
     
@@ -44,28 +50,41 @@ class PostMethodTest extends React.Component{
         return formIsValid
     }
 
-    handleValidation = () =>{
-        // event.preventDefault();
-        // if(this.validateForm()){
-        //     console.log(" Users Ok...");
-        //     this.handleUsersData()
-        //     // this.props.navigation.navigate("Dashboard")
-        // }
-        console.log(" Name is :- ",this.state.name);
-        var mobileNo = this.state.name
-        axios({
-            method : 'post',
-            headers : {
-                'Content-Type': 'application/json'
-                },
-            url : 'https://batbird.in/api/index.php', 
-            data : {
-                mobile : mobileNo,
-                }
-            })
-          .then(function (response) {
-            console.log(response.data);
-          })
+    handleValidation = async() =>{
+
+        // var obj = new HTTPService();
+            // var obj = new Demo.object();
+        // obj.post()
+
+       saveMobile('http://batbird.in/api/index.php',this.state.name)
+        
+        // const requestOptions = {
+        //     method: 'POST',
+        //     headers: { 
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({ mobile : this.state.name })
+        // };
+        // const response = await fetch('http://batbird.in/api/index.php', requestOptions)
+        // const data = await response.json();
+        // this.setState({ postId: data.id });
+        // console.log("post id is ",response);
+
+        // console.log(" Name is :- ",this.state.name);
+        // var mobileNo = this.state.name
+        // axios({
+        //     method : 'post',
+        //     headers : {
+        //         'Content-Type': 'application/json'
+        //         },
+        //     url : 'http://batbird.in/api/index.php', 
+        //     data : {
+        //         mobile : mobileNo,
+        //         }
+        //     })
+        //   .then(function (response) {
+        //     console.log(response.data);
+        //   })
     }
 
     handleUsersData = async () => {

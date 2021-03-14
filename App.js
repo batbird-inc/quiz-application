@@ -11,10 +11,12 @@ import ProfilePage from './components/ProfilePage'
 // import Login5 from './components/Login5';
 import BarCodeScanPage from './components/BarCodeScanPage';
 import MobileNoPage from './components/MobileNoPage'
-import PostMethodTest from './components/PostMethodTest'
+import PostMethodTest from './components/PostMethodTest';
+import MyComponent from './components/MyComponent'
 export default function App() {
   return (
     <PostMethodTest/>
+    // <MyComponent/>
     // <BarCodeScanPage/>
     // <MobileNoPage/>
     // <NavigationContainer>
